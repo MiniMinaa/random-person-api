@@ -9,7 +9,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-app.get("/ping", (rep, res) => {
+app.get("/ping", (req, res) => {
   res.json({ message: "pong" });
 });
 
@@ -75,27 +75,7 @@ app.post("/users", (req, res) => {
       error: "Invalid user data",
       details: validatedNewUser.error,
     });
-    //console.error(validatedNewUser.error);
   } else {
     res.status(201).json({ user: validatedNewUser.data });
   }
 });
-/*
-//define a schema for a username
-const user = { name: "Mina123", age: 24 };
-
-
-
-
-
-
-const validatedUsername = userschema.safeParse(user);
-
-if (!validatedUsername.success) {
-  console.error(validatedUsername.error);
-} else {
-  console.log(validatedUsername.data);
-}
-
-
-*/
