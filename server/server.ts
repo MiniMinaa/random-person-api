@@ -13,6 +13,47 @@ app.get("/ping", (rep, res) => {
   res.json({ message: "pong" });
 });
 
+const randomUserSchema = z.object({
+  results: z.array(
+    z.object({
+      name: z.object({
+        first: z.string(),
+        last: z.string(),
+      }),
+      country: z.string(),
+    }),
+  ),
+});
+
+//route
+
+app.get("/random-user", async (req, res) => {
+  try {
+    const response = await fetch("https://randomuser.me/api/");
+    const data = await response.json();
+
+    const validatedRandomUser = randomUserSchema.safeParse(data);
+
+    if (!validatedRandomUser.success) {
+      return res.status(500).json({
+        error: "Invalid data from RandomUser API",
+        details: validatedRandomUser.error,
+      });
+    }
+
+    const user = validatedRandomUser.data.results[0];
+
+    res.json({
+      name: `${user?.name.first} ${user?.name.last}`,
+      country: user?.country,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to fetch random user",
+    });
+  }
+});
+
 /*
 //define a schema for a username
 const user = { name: "Mina123", age: 24 };
@@ -28,41 +69,9 @@ const userschema = z.object({
   email: z.email(),
 });
 
-const randomUserResponseSchema = z.object({
-  results: z.array(
-    z.object({
-      name: z.object({
-        first: z.string(),
-        last: z.string(),
-      }),
-      country: z.string(),
-    }),
-  ),
-});
 
-app.get("/random-user", async (req, res) => {
-  try {
-    const response = await fetch("https://randomuser.me/api/");
-    const data = await response.json();
 
-    const validatedRandomUser = randomUserResponseSchema.safeParse(data);
-    if (!validatedRandomUser.success) {
-      return res.status(500).json({
-        error: "Invalid data from RandomUser API",
-        details: validatedRandomUser.error,
-      });
-    }
-    const randomUser = validatedRandomUser.data.results[0];
-    res.json({
-      name: `${randomUser?.name.first} ${randomUser?.name.last}`,
-      email: randomUser?.country,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: "Failed to fetch random user",
-    });
-  }
-});
+
 
 const validatedUsername = userschema.safeParse(user);
 
