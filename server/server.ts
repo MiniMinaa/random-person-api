@@ -5,6 +5,15 @@ const app = express();
 app.use(express.json());
 const PORT = 3000;
 
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+app.get("/ping", (rep, res) => {
+  res.json({ message: "pong" });
+});
+
+/*
 //define a schema for a username
 const user = { name: "Mina123", age: 24 };
 
@@ -75,7 +84,4 @@ app.post("/users", (req, res) => {
     res.status(201).json({ user: validatedNewUser });
   }
 });
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-});
+*/
