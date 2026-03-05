@@ -20,14 +20,16 @@ const randomUserSchema = z.object({
         first: z.string(),
         last: z.string(),
       }),
-      country: z.string(),
+      location: z.object({
+        country: z.string(),
+      }),
     }),
   ),
 });
 
 //route
 
-app.get("/random-user", async (req, res) => {
+app.get("/random-person", async (req, res) => {
   try {
     const response = await fetch("https://randomuser.me/api/");
     const data = await response.json();
@@ -45,7 +47,7 @@ app.get("/random-user", async (req, res) => {
 
     res.json({
       name: `${user?.name.first} ${user?.name.last}`,
-      country: user?.country,
+      country: user?.location.country,
     });
   } catch (error) {
     res.status(500).json({
