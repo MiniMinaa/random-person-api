@@ -56,20 +56,34 @@ app.get("/random-person", async (req, res) => {
   }
 });
 
-/*
-//define a schema for a username
-const user = { name: "Mina123", age: 24 };
-
-const userschema = z.object({
-  name: z.string().min(3).max(10),
+const userSchema = z.object({
+  name: z.string().min(3).max(12),
   age: z
     .number()
     .min(18, { message: "You must be at least 18 years old." })
     .max(100, { message: "you must be at most be 100 years old" })
     .optional()
     .default(28),
-  email: z.email(),
+  email: z.string().email().toLowerCase(),
 });
+
+app.post("/users", (req, res) => {
+  const validatedNewUser = userSchema.safeParse(req.body);
+
+  if (!validatedNewUser.success) {
+    return res.status(400).json({
+      error: "Invalid user data",
+      details: validatedNewUser.error,
+    });
+    //console.error(validatedNewUser.error);
+  } else {
+    res.status(201).json({ user: validatedNewUser.data });
+  }
+});
+/*
+//define a schema for a username
+const user = { name: "Mina123", age: 24 };
+
 
 
 
@@ -83,16 +97,5 @@ if (!validatedUsername.success) {
   console.log(validatedUsername.data);
 }
 
-app.post("/users", (req, res) => {
-  const validatedNewUser = userschema.safeParse(req.body);
-  if (!validatedNewUser.success) {
-    return res.status(400).json({
-      error: "Invalid user data",
-      details: validatedNewUser.error,
-    });
-    //console.error(validatedNewUser.error);
-  } else {
-    res.status(201).json({ user: validatedNewUser });
-  }
-});
+
 */
